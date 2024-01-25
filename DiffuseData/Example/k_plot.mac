@@ -1,0 +1,15 @@
+kuplot
+reset
+load h5, example.h5
+aver data:1
+angle data:1
+hart 1, 2
+cmap fire
+hlin 1, 0.1, 0.025, 40
+fnam off
+fset 2
+mark 1, 1
+achx X-axis steps: [ 0.10 0.00 0.00 ]
+achy Y-axis steps: [ 0.00 0.20 0.00 ]
+plot
+exit
