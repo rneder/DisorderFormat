@@ -1,1 +1,5 @@
 Folder for the common file format for disordered structures 
+
+Code    Fortran source codes of Common file format
+Python  Pythen test scripts read/write
+DISCUS  Set of DISCUS macros to generate / read file format
