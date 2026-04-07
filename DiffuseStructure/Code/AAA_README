@@ -1,0 +1,6 @@
+Fortran Code for the Common structure/data format
+
+lib_f90/                copies of the respective files in DISCUS
+h5fortran/              copies of the respective files in H5FORTRAN library at : https://github.com/geospace-code/h5fortran
+unified_top_write.f90   Writes a simple test structure file
+unified_top_read.f90    Reads a simple test structure file
