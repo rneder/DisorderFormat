@@ -1,0 +1,84 @@
+#@ HEADER
+#@ 
+#@ NAME         simple_cubic.mac
+#@ KEYWORDS     cubic, unified
+#@
+#@ DESCRIPTION  Read a simple cubic alpha-Polonium asymmetric unit
+#@ DESCRIPTION  Expand to 3x5x7 unit cell block and save as:
+#@ DESCRIPTION  DISCUS STRU; RMCProfile 6/7, SCATTY, UNIFIED
+#@ DESCRIPTION  Read crosswise and compare
+#@ 
+#@ PARAMETER    $0,0
+#@
+#@ USAGE        @simple_cubic
+#@ END
+#
+################################################################################
+#
+reset
+system mkdir -p CELL
+system mkdir -p DISCUS
+system mkdir -p RMCPROFILE
+system mkdir -p SCATTY
+#
+discus
+#
+read
+  free 3.35000,   3.35000,   3.35000,  90.00000,  90.00000,  90.00000, P m -3 m
+insert Po, 0.000, 0.000, 0.000, 0.2
+save
+  outfile CELL/polonium.cell
+  omit all
+  format keyword
+  run
+exit
+#
+################################################################################
+read
+  cell CELL/polonium.cell, 3, 5, 7
+#
+save
+  outfile DISCUS/polonium_3_5_7.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/polonium_3_5_7, version:6
+export rmc, RMCPROFILE/polonium_3_5_7, version:7
+export scatty, SCATTY/polonium_3_5_7, site:average
+#
+save
+  outfile UNIFIED/polonium_3_5_7.hdf5
+  form nexus
+  write all
+  run
+exit
+#
+reset
+#
+################################################################################
+#
+#  Read unified structure save again as DISCUS/RMCPROFILE/SCATTY and compare
+#
+################################################################################
+#
+read
+  stru UNIFIED/polonium_3_5_7.hdf5
+#
+save
+  outfile DISCUS/polonium_3_5_7_read.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/polonium_3_5_7_read, version:6
+export rmc, RMCPROFILE/polonium_3_5_7_read, version:7
+export scatty, SCATTY/polonium_3_5_7_read, site:average
+#
+system diff DISCUS/polonium_3_5_7.stru DISCUS/polonium_3_5_7_read.stru
+system diff RMCPROFILE/polonium_3_5_7.rmc6f RMCPROFILE/polonium_3_5_7_read.rmc6f
+system diff RMCPROFILE/polonium_3_5_7.rmc7  RMCPROFILE/polonium_3_5_7_read.rmc7
+#
+exit   ! Back to suite

@@ -1,0 +1,85 @@
+#@ HEADER
+#@ 
+#@ NAME         simple_trigonal.mac
+#@ KEYWORDS     trigonal, unified
+#@
+#@ DESCRIPTION  Read a simple trigonal alpha-Quartz asymmetric unit
+#@ DESCRIPTION  Expand to 3x5x7 unit cell block and save as:
+#@ DESCRIPTION  DISCUS STRU; RMCProfile 6/7, SCATTY, UNIFIED
+#@ DESCRIPTION  Read crosswise and compare
+#@ 
+#@ PARAMETER    $0,0
+#@
+#@ USAGE        @simple_trigonal
+#@ END
+#
+################################################################################
+#
+reset
+system mkdir -p CELL
+system mkdir -p DISCUS
+system mkdir -p RMCPROFILE
+system mkdir -p SCATTY
+#
+discus
+#
+read
+  free 4.9140, 4.9140, 5.4050, 90.00, 90.00, 120.00, P 32 2 1
+insert Si,   0.47000,  0.00000, 0.6666667, 0.05
+insert O ,   0.41460,  0.26780, 0.785430,  0.05
+save
+  outfile CELL/quartz.cell
+  omit all
+  format keyword
+  run
+exit
+#
+################################################################################
+read
+  cell CELL/quartz.cell, 6, 4, 2
+#
+save
+  outfile DISCUS/quartz_6_4_2.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/quartz_6_4_2, version:6
+export rmc, RMCPROFILE/quartz_6_4_2, version:7
+export scatty, SCATTY/quartz_6_4_2, site:average
+#
+save
+  outfile UNIFIED/quartz_6_4_2.hdf5
+  form nexus
+  write all
+  run
+exit
+#
+reset
+#
+################################################################################
+#
+#  Read unified structure save again as DISCUS/RMCPROFILE/SCATTY and compare
+#
+################################################################################
+#
+read
+  stru UNIFIED/quartz_6_4_2.hdf5
+#
+save
+  outfile DISCUS/quartz_6_4_2_read.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/quartz_6_4_2_read, version:6
+export rmc, RMCPROFILE/quartz_6_4_2_read, version:7
+export scatty, SCATTY/quartz_6_4_2_read, site:average
+#
+system diff DISCUS/quartz_6_4_2.stru DISCUS/quartz_6_4_2_read.stru
+system diff RMCPROFILE/quartz_6_4_2.rmc6f RMCPROFILE/quartz_6_4_2_read.rmc6f
+system diff RMCPROFILE/quartz_6_4_2.rmc7  RMCPROFILE/quartz_6_4_2_read.rmc7
+#
+exit   ! Back to suite
