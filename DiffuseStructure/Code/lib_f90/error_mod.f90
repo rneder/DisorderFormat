@@ -17,18 +17,22 @@ subroutine error_message(ier_num, ier_msg)
 integer                              , intent(out) :: ier_num
 character(len=*)  , dimension(NMSG)  , intent(out) :: ier_msg
 !
-integer, parameter :: IU = -4
+integer, parameter :: IU = -8
 integer, parameter :: IO =  0
 !
 integer :: i,j
 character(len=45), dimension(IU: IO) :: error
 !
 data error(IU:IO) / &
- 'Data set has wrong dimensions               ', & ! -4
- 'Data set has wrong rank                     ', & ! -3
- 'Data set does not exist in HDF5 file        ', & ! -2
- 'File not found                              ', & ! -1
- 'No error                                    '  & !  0
+  'An essential required field is missing      ', & ! -8
+  'Wrong HDF library                           ', & ! -7
+  '(Some) Meta data are missing                ', & ! -6
+  'File does not appear to be an HDF5 file     ', & ! -5
+  'Data set has wrong dimensions               ', & ! -4
+  'Data set has wrong rank                     ', & ! -3
+  'Data set does not exist in HDF5 file        ', & ! -2
+  'File not found                              ', & ! -1
+  'No error                                    '  & !  0
  /
 !
 write(*,'(a5, a45, a5,i4)') ' *** ',error(ier_num),' *** ', ier_num
