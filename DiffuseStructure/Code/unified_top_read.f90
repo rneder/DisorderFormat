@@ -66,6 +66,7 @@ integer :: i   ! Dummy index
 !
 infile           = 'example_fortran.hdf5'   ! Arbitrary name
 !
+write(*,*) ' CALLING read_STRU', allocated(symmetry_mat)
 !
 call unified_read_structure( infile, unit_cell_lengths, unit_cell_angles,                 &
                              symmetry_H_M, symmetry_origin, symmetry_abc, symmetry_n_mat, &
