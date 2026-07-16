@@ -19,8 +19,10 @@ set (LIBS  lib_f90 h5fortran_lib "${HDF5_LIBRARIES}" )
 
 set (CMAKE_Fortran_FLAGS "-fPIC -cpp -fcheck=all -g -Og -fbacktrace -Wall -Wconversion -Warray-bounds -Wline-truncation -Wcharacter-truncation -Wsurprising -Waliasing -Wunused-parameter -Wunused-variable -Wunused-function -Wunused-value -Wno-unused-dummy-argument -fwhole-file -fimplicit-none -pedantic -Wuninitialized -ffree-line-length-400")
 
-set (SOURCE_WRITE  unified_top_write.f90)
-set (SOURCE_READ   unified_top_read.f90)
+set (SOURCE_WRITE       unified_top_write.f90)
+set (SOURCE_READ        unified_top_read.f90)
+set (SOURCE_WRITE_DATA  unified_top_write_data.f90)
+set (SOURCE_READ_DATA   unified_top_read_data.f90)
 
 add_subdirectory(h5fortran)
 add_subdirectory(lib_f90)
@@ -30,3 +32,9 @@ target_link_libraries (unified_top_read ${LIBS} )
 
 add_executable(unified_top_write ${SOURCE_WRITE})
 target_link_libraries (unified_top_write ${LIBS} )
+
+add_executable(unified_top_write_data ${SOURCE_WRITE_DATA})
+target_link_libraries (unified_top_write_data ${LIBS} )
+
+add_executable(unified_top_read_data ${SOURCE_READ_DATA})
+target_link_libraries (unified_top_read_data ${LIBS} )
