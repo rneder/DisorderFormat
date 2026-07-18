@@ -37,6 +37,7 @@ integer           , dimension(:),   allocatable :: types_ordinal       ! Ordinal
 integer           , dimension(:),   allocatable :: types_charge        ! Atomic charge as +2 or -2 ...
 integer           , dimension(:),   allocatable :: types_isotope       ! Zero or specific isotpoe number
 real(kind=PREC_DP), dimension(:),   allocatable :: types_occupancy     ! Occupancy for the atom type, not for an individual atom
+character(len=32)                               :: coordinate_unit     ! 'basecell_fractional', 'supercell_fractional'
 !
 integer                                         :: number_of_atoms  ! Number of atoms
 integer           , dimension(:)  , allocatable :: atom_id          ! Sequential number   (might be omitted ???)
@@ -125,6 +126,8 @@ types_ordinal   = (/ 8 ,  1 ,  7 ,  1 /)
 types_charge    = 0
 types_isotope   = (/16 ,  1 , 14 ,  1 /)
 types_occupancy = 1.0_PREC_DP
+!
+coordinate_unit = 'basecell_fractional'
 !
 number_of_atoms = 30
 allocate(atom_id       (  number_of_atoms))
@@ -246,10 +249,12 @@ magnetic_spins(1,:) = -1.0_PREC_DP
 !
 optional_intended =  .true.    ! All optional parts are present
 !
+l_dump = .true.
 call unified_write_structure(outfile, unit_cell_lengths, unit_cell_angles,                &
                              symmetry_H_M, symmetry_origin, symmetry_abc, symmetry_n_mat, &
                              symmetry_mat, unit_cells, number_of_types, types_names,      &
-                             types_ordinal, types_charge, types_isotope, number_of_atoms, &
+                             types_ordinal, types_charge, types_isotope, coordinate_unit, &
+                             number_of_atoms, &
                              atom_type, atom_pos, atom_unit_cell, atom_site,              &
                              NMSG, ier_num, ier_msg,                                      &
                              optional_intended,                                           &

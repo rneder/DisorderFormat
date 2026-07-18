@@ -45,6 +45,7 @@ integer                   , dimension(3)                 :: data_dimension   ! D
 integer                                                  :: data_abs_is_hkl      ! Abscissa is 1=h 2=k 3=l
 integer                                                  :: data_ord_is_hkl      ! Ordinate is 1=h 2=k 3=l
 integer                                                  :: data_top_is_hkl      ! top-axis is 1=h 2=k 3=l
+character(len=32)                                        :: coordinate_unit      ! 'basecell_fractional, 'supercell_fractional', ...
 real(kind=PREC_DP)        , dimension(3   )              :: data_corner          ! Lower left bottom corner in fractional coordinates
 real(kind=PREC_DP)        , dimension(3, 3)              :: data_vector          ! Increment vectors abs: (:,1); ord: (:,2); top: (:,3)
 real(kind=PREC_DP)        , dimension(:, :, :), allocatable :: data_values  ! Actual data array
@@ -65,8 +66,6 @@ integer :: i
 !
  infile           = 'example_fortran_data.hdf5'   ! Arbitrary name
 !
-write(*,*) ' CALLING read_data', allocated(symmetry_mat)
-
 l_dump = .false.
 call unified_read_data(  infile, &
                              unit_cell_lengths, unit_cell_angles,               &
@@ -85,6 +84,7 @@ call unified_read_data(  infile, &
                              data_abs_is_hkl     , &
                              data_ord_is_hkl     , &
                              data_top_is_hkl     , &
+                             coordinate_unit , &
                              data_corner     , &
                              data_vector     , &
                              data_values     , &
@@ -135,6 +135,7 @@ write(*,'(a, a     )') ' Data style       ', data_type_style
 write(*,'(a, a     )') ' Data content     ', data_type_content
 write(*,'(a, a     )') ' Data symbol      ', data_rad_symbol
 write(*,'(a, 3f11.6)') ' Data length      ', data_rad_length
+write(*,'(a, a     )') ' Coordinate units ', coordinate_unit
 write(*,*)
 write(*,'(a, 3f11.6)') ' Data corner      ', data_corner(:)
 write(*,*)

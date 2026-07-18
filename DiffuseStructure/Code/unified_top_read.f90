@@ -35,6 +35,8 @@ integer           , dimension(:),   allocatable :: types_charge
 integer           , dimension(:),   allocatable :: types_isotope
 real(kind=PREC_DP), dimension(:),   allocatable :: types_occupancy
 !
+character(len=32)                               :: coordinate_unit  ! 'basecell_fractional , 'supercell_fractional'
+!
 integer                                         :: number_of_atoms  ! Number of atoms
 integer           , dimension(:)  , allocatable :: atom_id
 real(kind=PREC_DP), dimension(:,:), allocatable :: atom_pos
@@ -66,12 +68,11 @@ integer :: i   ! Dummy index
 !
 infile           = 'example_fortran.hdf5'   ! Arbitrary name
 !
-write(*,*) ' CALLING read_STRU', allocated(symmetry_mat)
-!
 call unified_read_structure( infile, unit_cell_lengths, unit_cell_angles,                 &
                              symmetry_H_M, symmetry_origin, symmetry_abc, symmetry_n_mat, &
                              symmetry_mat, unit_cells, number_of_types, types_names,      &
-                             types_ordinal, types_charge, types_isotope, number_of_atoms, &
+                             types_ordinal, types_charge, types_isotope, coordinate_unit, &
+                             number_of_atoms, &
                              atom_type, atom_pos, atom_unit_cell, atom_site,              &
                              atom_property, status_flags, crystal_meta,                   &
                              anisotropic_adp, molecules, average_struc, magnetic_spins,   &
@@ -113,6 +114,7 @@ write(*,'(a,3i8   )') ' Unit cells          ', unit_cells(1)
 write(*,'(a,3i8   )') ' Unit cells          ', unit_cells(2)
 write(*,'(a,3i8   )') ' Unit cells          ', unit_cells(3)
 write(*,'(a,i8)'    ) ' Number of types     ', number_of_types
+write(*,'(a,a )'    ) ' Atom coordinates:   ', coordinate_unit
 write(*,'(a,20(a4,a1))') ' Atom names        ', (types_names(i), ' ',i=1, number_of_types)
 write(*,'(a,20(i4,a1))') ' Atom ordinal      ', (types_ordinal(i), ' ',i=1, number_of_types)
 write(*,'(a,20(i4,a1))') ' Atom charge       ', (types_charge (i), ' ',i=1, number_of_types)

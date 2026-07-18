@@ -45,6 +45,7 @@ integer                   , dimension(3)                 :: data_dimension   ! D
 integer                                                  :: data_abs_is_hkl      ! Abscissa is 1=h 2=k 3=l
 integer                                                  :: data_ord_is_hkl      ! Ordinate is 1=h 2=k 3=l
 integer                                                  :: data_top_is_hkl      ! top-axis is 1=h 2=k 3=l
+character(len=32)                                        :: coordinate_unit      !'basecell_fractional', 'supercell_fractional', ...
 real(kind=PREC_DP)        , dimension(3   )              :: data_corner          ! Lower left bottom corner in fractional coordinates
 real(kind=PREC_DP)        , dimension(3, 3)              :: data_vector          ! Increment vectors abs: (:,1); ord: (:,2); top: (:,3)
 real(kind=PREC_DP)        , dimension(:, :, :), allocatable :: data_values  ! Actual data array
@@ -118,6 +119,7 @@ data_dimension        = (/41, 31, 21 /)
 data_abs_is_hkl       = 1
 data_ord_is_hkl       = 2
 data_top_is_hkl       = 3
+coordinate_unit       = 'basecell_fractional'
 data_corner(:  )      = (/ -2.0D0, -1.5D0, -1.0D0 /)
 data_vector(:,1)      = (/  0.1D0,  0.0D0,  0.0D0 /)
 data_vector(:,2)      = (/  0.0D0,  0.1D0,  0.0D0 /)
@@ -141,16 +143,16 @@ do l=1, data_dimension(3)
       enddo
    enddo
 enddo
-write(*,*) ' ======================================'
-write(*,*)
-write(*,'(a, a     )') ' Data experiment  ', data_type_experiment
-write(*,'(a, a     )') ' Data with  bragg ', data_type_with_bragg
-write(*,'(a, a     )') ' Data symmetrized ', data_type_symmetrized
-write(*,'(a, a     )') ' Data number      ', data_type_number
-write(*,'(a, a     )') ' Data axes        ', data_type_axes
-write(*,*) ' ======================================'
+!write(*,*) ' ======================================'
+!write(*,*)
+!write(*,'(a, a     )') ' Data experiment  ', data_type_experiment
+!write(*,'(a, a     )') ' Data with  bragg ', data_type_with_bragg
+!write(*,'(a, a     )') ' Data symmetrized ', data_type_symmetrized
+!write(*,'(a, a     )') ' Data number      ', data_type_number
+!write(*,'(a, a     )') ' Data axes        ', data_type_axes
+!write(*,*) ' ======================================'
 
-l_dump = .true.
+!l_dump = .true.
 call unified_write_data( outfile, unit_cell_lengths, unit_cell_angles,               &
                              symmetry_H_M, symmetry_origin, symmetry_abc, symmetry_n_mat, &
                              symmetry_mat,                                                &
@@ -167,6 +169,7 @@ call unified_write_data( outfile, unit_cell_lengths, unit_cell_angles,          
                              data_abs_is_hkl     , &
                              data_ord_is_hkl     , &
                              data_top_is_hkl     , &
+                             coordinate_unit , &
                              data_corner     , &
                              data_vector     , &
                              data_values     , &
