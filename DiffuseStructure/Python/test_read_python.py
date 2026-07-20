@@ -23,18 +23,19 @@ types_ordinal       = return_value[10]
 types_charge        = return_value[11]
 types_isotope       = return_value[12]
 number_of_atoms     = return_value[13]
-atom_type           = return_value[14]
-atom_position       = return_value[15]
-atom_unit_cell      = return_value[16]
-atom_site_number    = return_value[17]
-status_flags        = return_value[18]
-meta_data           = return_value[19]
-average             = return_value[20]
-magnetic_spins      = return_value[21]
-property_flags      = return_value[22]
-anisotropic_tuple   = return_value[23]
-molecules           = return_value[24]
-occupancy           = return_value[25]
+coordinate_unit     = return_value[14]
+atom_type           = return_value[15]
+atom_position       = return_value[16]
+atom_unit_cell      = return_value[17]
+atom_site_number    = return_value[18]
+status_flags        = return_value[19]
+meta_data           = return_value[20]
+average             = return_value[21]
+magnetic_spins      = return_value[22]
+property_flags      = return_value[23]
+anisotropic_tuple   = return_value[24]
+molecules           = return_value[25]
+occupancy           = return_value[26]
 print(" ")
 print(" READ DIFFUSE STRUCTURE ")
 print(" unit_cell_lengths      ", unit_cell_lengths)
@@ -54,6 +55,8 @@ print(" Unit cells       ", unit_cells[2])
 print(" Number of types  ", number_of_types)
 for i in range(number_of_types):
    print(" Name Ord Charge  Iso ", types_names[i], types_ordinal[i], types_charge[i], types_isotope[i])
+print(" ")
+print(" Atom coordinates ", coordinate_unit )
 print(" ")
 print(" Number of atoms  ", number_of_atoms )
 for i in range(number_of_atoms):

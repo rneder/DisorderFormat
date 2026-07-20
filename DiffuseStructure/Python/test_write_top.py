@@ -57,6 +57,8 @@ types_charge  = np.array([0, 0, 0, 0], dtype=np.int32)
 types_isotope = np.array([16, 1, 14, 1], dtype=np.int32)
 types_occupancy = np.ones((types_number, ), dtype=np.float64)
 #
+coordinate_unit = "basecell_fractional"
+#
 number_of_atoms = 30
 atom_id   = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,19, 10,21,22,23,24,25,26,27,28,29, 30])
 atom_type = np.array([1, 2, 2, 2, 2, 3, 4, 4, 4,  4, 1, 2, 2, 2, 2, 3, 4, 4, 4,  4, 1, 2, 2, 2, 2, 3, 4, 4, 4,  4], dtype=np.int32)
@@ -235,6 +237,8 @@ print("Types_ordinal     ", types_ordinal )
 print("Types_charge      ", types_charge)
 print("Types_isotope     ", types_isotope)
 print(" ")
+print("Atom coordinates  ", coordinate_unit)
+print(" ")
 print("Number of atoms   ", number_of_atoms)
 for i in range(number_of_atoms):
    print(" ID TY POS CL SI: ", atom_id[i], atom_type[i], atom_pos[:,i], atom_unit_cell[:,i], atom_site[i] )
@@ -277,16 +281,17 @@ ierror = write_diffuse_structure(file_path,
             symmetry_n_mat,
             symmetry_mat,
             unit_cells,
-            types_number, \
-            types_names, \
-            types_ordinal, \
-            types_charge, \
-            types_isotope, \
-            number_of_atoms,
-            atom_type, \
-            atom_pos, \
-            atom_unit_cell, \
-            atom_site, \
+            types_number, 
+            types_names, 
+            types_ordinal, 
+            types_charge, 
+            types_isotope, 
+            coordinate_unit, 
+            number_of_atoms, 
+            atom_type, 
+            atom_pos, 
+            atom_unit_cell, 
+            atom_site, 
             status_flags=status_flags,
             average_structure=average_structure,
             magnetic_spins=magnetic_spins,

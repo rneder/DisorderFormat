@@ -120,6 +120,7 @@ class NeXusStructureFormat:
                        types_ordinal,
                        types_charge,
                        types_isotope,
+                       coordinate_unit,
                        number_of_atoms,
                        atom_type,
                        atom_position,
@@ -149,6 +150,7 @@ class NeXusStructureFormat:
         self.set_types_charge(types_charge)
         self.set_types_isotope(types_isotope)
         self.set_number_of_atoms(number_of_atoms)
+        self.set_coordinate_unit(coordinate_unit)
         self.set_atom_type(atom_type)
         self.set_atom_position(atom_position)
         self.set_atom_unit_cell(atom_unit_cell)
@@ -209,6 +211,7 @@ class NeXusStructureFormat:
         self.number_of_types = number_of_types
 
     def set_number_of_atoms(self, number_of_atoms):
+        print("Number of atoms   ", number_of_atoms)
         if not isinstance(number_of_atoms, int) or number_of_atoms <= 0:
             raise ValueError("Number of atoms must be a positive integer.")
         self.number_of_atoms = number_of_atoms
@@ -234,6 +237,11 @@ class NeXusStructureFormat:
             raise ValueError("Types isotope numbers must be a vector of unsigned integers.")
         self.types_isotope = types_isotope
         #print("Set isotope ", types_isotope)
+
+    def set_coordinate_unit(self, coordinate_unit):
+        if not isinstance(coordinate_unit, str) or len(coordinate_unit) > 32:
+            raise ValueError("coordinate_unit must be a string of up to 32 characters.")
+        self.coordinate_unit = coordinate_unit
 
     def set_atom_type(self, atom_type):
         if not isinstance(atom_type, np.ndarray) or atom_type.dtype != np.int32:
@@ -360,7 +368,9 @@ class NeXusStructureFormat:
                 nx_data.create_dataset('types_ordinal', data=self.types_ordinal)
                 nx_data.create_dataset('types_charge', data=self.types_charge)
                 nx_data.create_dataset('types_isotope', data=self.types_isotope)
-
+                #
+                # Save dataset for coordinate unit 
+                nx_data.create_dataset('coordinate_unit', data=np.string_(self.coordinate_unit))
                 # Save datasets for the information on the individual atoms 
                 nx_data.create_dataset('atom_type', data=self.atom_type)
                 nx_data.create_dataset('atom_position', data=self.atom_position)
@@ -439,9 +449,9 @@ class NeXusStructureFormat:
             raise IOError("Failed to write to the specified file path.")
     @classmethod
     def load_from_nexus(cls, file_path):
-        #print("In load_from_nexus", file_path)
+        print("In load_from_nexus", file_path)
         try:
-            #print(" READING FILE")
+            print(" READING FILE")
             with h5py.File(file_path, 'r') as file:
                 nx_data = file['entry/data']
                 
@@ -501,6 +511,11 @@ class NeXusStructureFormat:
                 
                 if number_of_types <= 0:
                     raise ValueError("Number of types must be a positive integer.")
+                
+                # Coordinate_unit validation
+                coordinate_unit = nx_data['coordinate_unit'][()].decode('utf-8')
+                if not isinstance(coordinate_unit, str) or len(coordinate_unit) > 32:
+                    raise ValueError("coordinate_unit must be a string of up to 32 characters.")
 
                 # Number of atoms validation
                 # Load number of atoms, ensuring we extract the first element and convert appropriately
@@ -624,6 +639,7 @@ class NeXusStructureFormat:
                            types_ordinal=types_ordinal,
                            types_charge=types_charge,
                            types_isotope=types_isotope,
+                           coordinate_unit=coordinate_unit,
                            number_of_atoms=number_of_atoms,
                            atom_type=atom_type,
                            atom_position=atom_position,
@@ -664,6 +680,7 @@ def write_diffuse_structure(file_path, \
             types_ordinal, \
             types_charge, \
             types_isotope, \
+            coordinate_unit, \
             number_of_atoms, \
             atom_type, \
             atom_position, \
@@ -742,6 +759,7 @@ def write_diffuse_structure(file_path, \
             types_ordinal,
             types_charge,
             types_isotope,
+            coordinate_unit, 
             number_of_atoms,
             atom_type,
             atom_position,
@@ -807,6 +825,7 @@ def read_diffuse_structure(file_path):
            loaded.types_charge, \
            loaded.types_isotope, \
            loaded.number_of_atoms, \
+           loaded.coordinate_unit, \
            loaded.atom_type,\
            loaded.atom_position,\
            loaded.atom_unit_cell,\
