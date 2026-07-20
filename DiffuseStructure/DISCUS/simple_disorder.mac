@@ -1,0 +1,203 @@
+#@ HEADER
+#@ 
+#@ NAME         simple_disorder.mac
+#@ KEYWORDS     cubic, unified
+#@
+#@ DESCRIPTION  Read a simple cubic alpha-Polonium asymmetric unit
+#@ DESCRIPTION  Expand to NxNxN unit cell block.
+#@ DESCRIPTION  Create SRO and save intensity output as map
+#@ DESCRIPTION  in unified format as HDF5
+#@ DESCRIPTION  Save structure in unified format and 
+#@ DESCRIPTION  DISCUS STRU; RMCProfile 6/7, SCATTY, UNIFIED
+#@ DESCRIPTION  Read crosswise and compare
+#@ 
+#@ PARAMETER    $0,0
+#@
+#@ USAGE        @simple_cubic
+#@ END
+#
+################################################################################
+#
+reset
+system mkdir -p CELL          ! Create directories if nonexistent
+system mkdir -p DISCUS
+system mkdir -p RMCPROFILE
+system mkdir -p SCATTY
+system mkdir -p INTE
+#
+variable integer, ncell
+variable real, P_100
+variable real, P_010
+variable real, P_001
+#
+ncell =  20
+P_100 = -0.40               ! Define SRO parameters
+P_010 = -0.40
+P_001 = -0.40
+discus
+#
+#   Create a primitive cubic structure from scratch
+#
+read
+  free 3.35000,   3.35000,   3.35000,  90.00000,  90.00000,  90.00000, P m -3 m
+insert Po, 0.000, 0.000, 0.000, 0.2
+save
+  outfile CELL/polonium.cell
+  omit all
+  format keyword               ! Standard discus ASCII format
+  run
+exit
+#
+################################################################################
+#
+read
+  cell CELL/polonium.cell, ncell, ncell, ncell
+#
+replace PO, Au, all, 0.5   ! Replace all PO by Au by 50% probability
+#
+#  Straightforward SRO with first neighbor <100> correlations only
+#
+mmc
+  reset
+  set neig, rese
+  set vect, rese
+#
+  set vec,  1,  1, 1,  1,  0,  0
+  set vec,  2,  1, 1, -1,  0,  0
+#
+  set vec,  3,  1, 1,  0,  1,  0
+  set vec,  4,  1, 1,  0, -1,  0
+#
+  set vec,  5,  1, 1,  0,  0,  1
+  set vec,  6,  1, 1,  0,  0, -1
+#
+  set neig, number:next, vec,  1, 2
+  set neig, number:next, vec,  3, 4
+  set neig, number:next, vec,  5, 6
+#
+  set mode, 1.0, swchem, all
+#
+  set target, 1, corr, Po, Au,  P_100, 0.000, CORR
+  set target, 2, corr, Po, Au,  P_010, 0.000, CORR
+  set target, 3, corr, Po, Au,  P_001, 0.000, CORR
+#
+  set cycle, 500*n[1]
+  set feed, auto
+  set temp, 1.5
+  set finish, stop:converge, diff:0.055, change:0.052, aver:0.050, feed:3
+#
+  show
+  run
+exit
+#
+# Plot result with jmol
+#
+plot
+  program jmol
+  ourfile STRU/dummy_plot.cif
+  select all
+  extend all
+  run plot:inter, kill:yes
+exit
+#
+#  Small  Fourier with different extend along the three axes
+#
+fourier
+  xray, table:waas
+  ll  -3.00, -2.00, -4.00
+  lr   3.00, -2.00, -4.00
+  ul  -3.00,  2.00, -4.00
+  tl  -3.00, -2.00,  4.00
+  na 121
+  no  81
+  nt 161
+  abs h
+  ord k
+  top l
+  temp use
+  disp off
+  set  aver, 100
+  set technique:nufft
+  set symmetry:ignore
+  set filter:lanczos, width:9, damp:0.55
+  run
+exit
+output
+  outfile INTE/disorder_sro.h5
+  form  hdf5              ! Save as hdf5 in common data file format 
+  value inte
+  run
+exit
+#
+#   Save crystal structure in discus file format
+#
+save
+  outfile DISCUS/disorder.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/disorder, version:6        ! Direct export in rmc Version 6
+export rmc, RMCPROFILE/disorder, version:7        ! Direct export in rmc Version 7
+export scatty, SCATTY/disorder, site:average      ! Direct export in scatty format
+#
+#   Save crystal structure in common file format
+#
+save
+  outfile UNIFIED/disorder.hdf5
+  form nexus
+  write all
+  run
+exit
+#
+#  Display diffraction data
+#
+reset
+branch kuplot
+reset
+load h5, INTE/disorder_sro.h5, layer:91 ! this is layer at L=0.5
+#
+aver  data:1
+angle data:1
+scale
+mark 1, 1
+hart 1, 2
+cmap fire
+hlin 1, 1,1,100, %
+achx [ H 0 0 ]
+achy [ 0 K 0 ]
+tit1 Simple SRO with negative correlations
+tit2 At layer 91; L = 0.500
+fnam off
+fset 2
+plot
+#mouse   ! Option for interactive plot in KUPLOT
+#
+exit
+#
+################################################################################
+#
+#  Read unified structure save again as DISCUS/RMCPROFILE/SCATTY and compare
+#
+################################################################################
+#
+read
+  stru UNIFIED/disorder.hdf5
+#
+save
+  outfile DISCUS/disorder_read.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/disorder_read, version:6
+export rmc, RMCPROFILE/disorder_read, version:7
+export scatty, SCATTY/disorder_read, site:average
+#
+system diff DISCUS/disorder.stru DISCUS/disorder_read.stru
+system diff RMCPROFILE/disorder.rmc6f RMCPROFILE/disorder_read.rmc6f
+system diff RMCPROFILE/disorder.rmc7  RMCPROFILE/disorder_read.rmc7
+#
+exit   ! Back to suite

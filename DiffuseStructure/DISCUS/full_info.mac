@@ -1,0 +1,87 @@
+#@ HEADER
+#@ 
+#@ NAME         full_info.mac
+#@ KEYWORDS     monoclinic, unified
+#@
+#@ DESCRIPTION  Read a sucrose asymmetric unit
+#@ DESCRIPTION  Expand to 3x5x7 unit cell block and save as:
+#@ DESCRIPTION  DISCUS STRU; RMCProfile 6/7, SCATTY, UNIFIED
+#@ DESCRIPTION  Read crosswise and compare
+#@ 
+#@ PARAMETER    $0,0
+#@
+#@ USAGE        @simple_cubic
+#@ END
+#
+################################################################################
+#
+reset
+system mkdir -p CELL
+system mkdir -p DISCUS
+system mkdir -p RMCPROFILE
+system mkdir -p SCATTY
+#
+discus
+#
+#
+################################################################################
+read
+  cell CELL/sucrose.cell, 3, 5, 7
+#
+save
+  outfile DISCUS/sucrose_3_5_7.stru
+  write all
+  format keyword
+  run
+exit
+echo "INITIAL READ "
+eval b[1]
+show atom, 1
+show adp:all
+wait return
+#
+export rmc, RMCPROFILE/sucrose_3_5_7, version:6
+export rmc, RMCPROFILE/sucrose_3_5_7, version:7
+export scatty, SCATTY/sucrose_3_5_7, site:average
+#
+save
+  outfile UNIFIED/sucrose_3_5_7.hdf5
+  form nexus
+  write all
+  run
+exit
+wait return
+#
+reset
+#
+################################################################################
+#
+#  Read unified structure save again as DISCUS/RMCPROFILE/SCATTY and compare
+#
+################################################################################
+#
+read
+  stru UNIFIED/sucrose_3_5_7.hdf5, dump:yes
+echo "BACK FROM HDF "
+wait return
+eval b[1]
+show atom, 1
+show adp:all
+wait return
+#
+save
+  outfile DISCUS/sucrose_3_5_7_read.stru
+  write all
+  format keyword
+  run
+exit
+#
+export rmc, RMCPROFILE/sucrose_3_5_7_read, version:6
+export rmc, RMCPROFILE/sucrose_3_5_7_read, version:7
+export scatty, SCATTY/sucrose_3_5_7_read, site:average
+#
+system diff DISCUS/sucrose_3_5_7.stru DISCUS/sucrose_3_5_7_read.stru
+system diff RMCPROFILE/sucrose_3_5_7.rmc6f RMCPROFILE/sucrose_3_5_7_read.rmc6f
+system diff RMCPROFILE/sucrose_3_5_7.rmc7  RMCPROFILE/sucrose_3_5_7_read.rmc7
+#
+exit   ! Back to suite
