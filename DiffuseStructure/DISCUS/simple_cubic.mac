@@ -43,6 +43,11 @@ save
   format keyword
   run
 exit
+echo "INITIAL READ "
+eval b[1]
+show atom, 1
+show adp:all
+wait return
 #
 export rmc, RMCPROFILE/polonium_3_5_7, version:6
 export rmc, RMCPROFILE/polonium_3_5_7, version:7
@@ -54,6 +59,7 @@ save
   write all
   run
 exit
+wait return
 #
 reset
 #
@@ -65,6 +71,11 @@ reset
 #
 read
   stru UNIFIED/polonium_3_5_7.hdf5
+echo "BACK FROM HDF "
+eval b[1]
+show atom, 1
+show adp:all
+wait return
 #
 save
   outfile DISCUS/polonium_3_5_7_read.stru
